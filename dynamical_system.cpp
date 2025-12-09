@@ -199,3 +199,25 @@ string_vector dynamical_system::get_output_quantity_names() const
         vector<state_map>{initial_values, at(drivers, 0)},
         direct_mcs);
 }
+
+string_vector dynamical_system::get_direct_module_names() const
+{
+    string_vector out;
+    out.reserve(
+        direct_modules.size());
+    for (auto& module : direct_mcs) {
+        out.push_back(module->get_name());
+    }
+    return out;
+}
+
+string_vector dynamical_system::get_differential_module_names() const
+{
+    string_vector out;
+    out.reserve(
+        differential_modules.size());
+    for (auto& module : differential_mcs) {
+        out.push_back(module->get_name());
+    }
+    return out;
+}

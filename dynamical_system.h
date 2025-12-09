@@ -177,6 +177,8 @@ class dynamical_system
     vector<const double*> get_quantity_access_ptrs(string_vector quantity_names) const;
     string_vector get_differential_quantity_names() const { return keys(initial_values); }
     string_vector get_output_quantity_names() const;
+    string_vector get_direct_module_names() const;
+    string_vector get_differential_module_names() const;
 
     // For generating reports to the user
     int get_ncalls() const { return ncalls; }
