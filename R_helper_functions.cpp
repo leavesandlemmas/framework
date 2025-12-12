@@ -85,6 +85,17 @@ string_vector make_vector(SEXP const& r_string_vector)
     return v;
 }
 
+std::vector<double> state_vector_from_r_vector(SEXP const& r_vector)
+{
+    std::vector<double> v;
+    size_t n = Rf_length(r_vector);
+    v.reserve(n);
+    for (size_t i = 0; i < n; ++i) {
+        v.emplace_back(REAL(r_vector)[i]);
+    }
+    return v;
+}
+
 /**
  *  @brief Creates a std::vector of pointers to module_creator objects from
  *  an R vector of R external pointer objects
@@ -262,6 +273,18 @@ SEXP r_logical_from_boolean(bool b)
     *LOGICAL(logical_output) = b;
     UNPROTECT(1);
     return logical_output;
+}
+
+SEXP r_vector_from_state_vector(std::vector<double> const& state_vector)
+{
+    const size_t dim = state_vector.size();
+    SEXP r_vector = PROTECT(Rf_allocVector(REALSXP, dim));
+    for (size_t i = 0; i < dim; ++i) {
+        REAL(r_vector)
+        [i] = state_vector[i];
+    }
+    UNPROTECT(1);
+    return r_vector;
 }
 
 void output_map(state_map const& m)

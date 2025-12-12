@@ -14,6 +14,8 @@ string_vector make_vector(SEXP const& r_string_vector);
 
 mc_vector mc_vector_from_list(SEXP const& list);
 
+std::vector<double> state_vector_from_r_vector(SEXP const& r_vector);
+
 SEXP list_from_map(state_map const& m);
 
 SEXP list_from_map(state_vector_map const& m);
@@ -33,6 +35,8 @@ SEXP vector_from_map(state_map const& m);
 SEXP r_string_vector_from_vector(string_vector const& v);
 
 SEXP r_logical_from_boolean(bool b);
+
+SEXP r_vector_from_state_vector(std::vector<double> const& state_vector);
 
 void output_map(state_map const& m);
 
