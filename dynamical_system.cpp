@@ -221,3 +221,8 @@ string_vector dynamical_system::get_differential_module_names() const
     }
     return out;
 }
+
+state_map dynamical_system::get_initial_values() const
+{
+    return initial_values;
+}

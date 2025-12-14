@@ -180,6 +180,8 @@ class dynamical_system
     string_vector get_direct_module_names() const;
     string_vector get_differential_module_names() const;
 
+    state_map get_initial_values() const;
+
     // For generating reports to the user
     int get_ncalls() const { return ncalls; }
     void reset_ncalls() { ncalls = 0; }

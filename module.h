@@ -42,17 +42,13 @@ class module
 {
    public:
     module(
-        bool const& differential,
-        bool const& requires_euler)
-        : differential{differential},
-          requires_euler{requires_euler}
+        bool const& requires_euler) :requires_euler{requires_euler}
     {
     }
 
     virtual ~module() = 0;
 
     // Functions for returning module information
-    bool is_differential() const { return differential; }
     bool requires_euler_ode_solver() const { return requires_euler; }
 
     // Functions for running the module
@@ -62,7 +58,6 @@ class module
     virtual void do_operation() const = 0;
 
     std::string const module_name;
-    bool const differential;
     bool const requires_euler;
 
    protected:
@@ -88,10 +83,10 @@ class direct_module : public module
 {
    public:
     direct_module(bool requires_euler = false)
-        : module{false, requires_euler}
+        : module{requires_euler}
     {
     }
-
+    static bool is_differential() { return false; }
     virtual ~direct_module() = 0;
 
    protected:
@@ -129,10 +124,11 @@ class differential_module : public module
 {
    public:
     differential_module(bool requires_euler = false)
-        : module{true, requires_euler}
+        : module{requires_euler}
     {
     }
 
+    static bool is_differential() { return true; }
     virtual ~differential_module() = 0;
 
    protected:

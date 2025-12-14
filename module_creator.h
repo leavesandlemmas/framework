@@ -40,6 +40,7 @@ class module_creator
     virtual string_vector get_inputs() = 0;
     virtual string_vector get_outputs() = 0;
     virtual std::string get_name() = 0;
+    virtual bool is_differential() = 0;
 
     virtual std::unique_ptr<module> create_module(
         state_map const& input_quantities, state_map* output_quantities) = 0;
@@ -80,6 +81,11 @@ class module_creator_impl : public module_creator
     std::string get_name()
     {
         return T::get_name();
+    }
+
+    bool is_differential()
+    {
+        return T::is_differential();
     }
 
     std::unique_ptr<module> create_module(

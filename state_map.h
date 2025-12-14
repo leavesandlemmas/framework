@@ -44,7 +44,7 @@ using state_vector_map = std::unordered_map<std::string, std::vector<double>>;
  * state in a state_vector_map using an out-of-range index.
  */
 struct bad_state_vector_map_index : std::out_of_range {
-    bad_state_vector_map_index(std::string msg) :out_of_range{msg} { }
+    bad_state_vector_map_index(std::string msg) : out_of_range{msg} {}
 };
 
 /**
@@ -96,4 +96,3 @@ state_map state_map_from_names(name_list_type names)
 }
 
 #endif
-

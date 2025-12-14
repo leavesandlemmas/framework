@@ -1,45 +1,45 @@
 #include <algorithm>                            // For std::find
 #include <memory>                               // For std::unique_ptr
 #include "state_map.h"                          // For state_map, string_vector, string_set
-#include "module.h"                            // For module_vector
+#include "module.h"                             // For module_vector
 #include "utils/module_dependency_utilities.h"  // for has_cyclic_dependency
 #include "validate_dynamical_system.h"
 
 /**
-  * @brief Checks over a group of quantities and modules to ensure they can be
-  *        used to create a valid system.
-  *
-  * @param[in,out] message Validation feedback is added to this string.
-  * @return `true` if the inputs are valid, `false` otherwise.
-  *
-  * The following criteria are used to determine validity:
-  * 1. Each quantity is specified only once.
-  * 2. All module inputs are specified.
-  * 3. Derivatives are calculated only for quantities in the initial values.
-  * 4. Direct modules can be ordered in such a way that inputs
-  *    are calculated before they are accessed.
-  *
-  * We consider a quantity to have been "specified" (or "defined") if it is a
-  * key in one of the maps `initial_values`, `params`, or
-  * `drivers`, or, if it is an output variable of one of the direct
-  * modules listed in `direct_module_names`.
-  *
-  * Criterion 2 and criterion 4 are related: Criterion 2 requires
-  * merely that each input to a direct or differential module is either
-  * a variable in the initial values, is one of the parameters, or is
-  * an output of some direct module.  Criterion 4 goes further
-  * for the case of a direct module where an input quantity is
-  * provided by the output of some other direct module: It
-  * requires that the direct modules can be ordered in such a
-  * way that each of a module's input quantities that is neither a
-  * parameter or a quantity in the initial values be provided by the
-  * output of a module earlier in the list.
-  *
-  * Notably absent from these criteria is a requirement that a derivative be
-  * calculated for every value given in the initial values.  Values in the
-  * initial values that are not outputs of any differential module are assumed
-  * to have a derivative of zero, that is, they are assumed to be constant.
-  */
+ * @brief Checks over a group of quantities and modules to ensure they can be
+ *        used to create a valid system.
+ *
+ * @param[in,out] message Validation feedback is added to this string.
+ * @return `true` if the inputs are valid, `false` otherwise.
+ *
+ * The following criteria are used to determine validity:
+ * 1. Each quantity is specified only once.
+ * 2. All module inputs are specified.
+ * 3. Derivatives are calculated only for quantities in the initial values.
+ * 4. Direct modules can be ordered in such a way that inputs
+ *    are calculated before they are accessed.
+ *
+ * We consider a quantity to have been "specified" (or "defined") if it is a
+ * key in one of the maps `initial_values`, `params`, or
+ * `drivers`, or, if it is an output variable of one of the direct
+ * modules listed in `direct_module_names`.
+ *
+ * Criterion 2 and criterion 4 are related: Criterion 2 requires
+ * merely that each input to a direct or differential module is either
+ * a variable in the initial values, is one of the parameters, or is
+ * an output of some direct module.  Criterion 4 goes further
+ * for the case of a direct module where an input quantity is
+ * provided by the output of some other direct module: It
+ * requires that the direct modules can be ordered in such a
+ * way that each of a module's input quantities that is neither a
+ * parameter or a quantity in the initial values be provided by the
+ * output of a module earlier in the list.
+ *
+ * Notably absent from these criteria is a requirement that a derivative be
+ * calculated for every value given in the initial values.  Values in the
+ * initial values that are not outputs of any differential module are assumed
+ * to have a derivative of zero, that is, they are assumed to be constant.
+ */
 bool validate_dynamical_system_inputs(
     std::string& message,
     state_map initial_values,
@@ -539,27 +539,11 @@ string_vector find_euler_requirements(mc_vector mcs)
  */
 string_vector find_mischaracterized_modules(mc_vector mcs, bool is_differential)
 {
-    // Get all the module inputs and outputs
-    string_set all_module_inputs =
-        find_unique_module_inputs(std::vector<mc_vector>{mcs});
-
-    string_set all_module_outputs =
-        find_unique_module_outputs(mcs);
-
-    // Make an appropriate state_map that contains them all
-    state_map quantities;
-    for (string_set const& names : std::vector<string_set>{all_module_inputs, all_module_outputs}) {
-        for (std::string const& n : names) {
-            quantities[n] = 0;
-        }
-    }
-
     // Instantiate each module and check its characterization
     string_vector mischaracterized_modules;
-    module_vector modules = get_module_vector(mcs, quantities, &quantities);
-    for (size_t i = 0; i < modules.size(); ++i) {
-        if (modules[i]->is_differential() != is_differential) {
-            mischaracterized_modules.push_back(mcs[i]->get_name());
+    for (auto mc : mcs) {
+        if (mc->is_differential() != is_differential) {
+            mischaracterized_modules.push_back(mc->get_name());
         }
     }
 
